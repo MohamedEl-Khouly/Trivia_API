@@ -23,6 +23,13 @@ class TriviaTestCase(unittest.TestCase):
         )
         setup_db(self.app, self.database_path)
 
+        self.new_question ={
+            'question': 'who was the last epl champion?',
+            'answer': 'liverpool',
+            'difficulty': 1,
+            'category': 6
+        }
+
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -80,6 +87,20 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Request cannot be procesed')
+
+    def test_create_question(self):
+        res = self.client().post('/questions', json=self.new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+
+    def test_create_question_failed(self):
+        res = self.client().post('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
         self.assertEqual(data['message'], 'Request cannot be procesed')
 
 
