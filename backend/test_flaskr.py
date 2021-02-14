@@ -18,7 +18,7 @@ class TriviaTestCase(unittest.TestCase):
         self.database_pass = os.getenv('POSTGRES_PASSWORD')
         self.database_name = "trivia_test"
         self.database_path = "postgresql://{}:{}@{}/{}".format(
-            self.database_user,self.database_pass,
+            self.database_user, self.database_pass,
             'localhost:5432', self.database_name
         )
         setup_db(self.app, self.database_path)
@@ -29,7 +29,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -38,15 +38,34 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/categories')
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code,200)
-        self.assertEqual(data['success'],True)
-        self.assertEqual(type(data['categories']),dict)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(type(data['categories']), dict)
         self.assertTrue(len(data['categories']))
 
     def test_categories_not_found(self):
         res = self.client().get('/categories')
-        
-        self.assertEqual(res.status_code,404)
+
+        self.assertEqual(res.status_code, 404)
+
+    def test_get_paginated_questions(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['categories']))
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(data['total_questions_number'])
+
+    def test_404_sent_requesting_beyound_valid_pages(self):
+        res = self.client().get('/questions?page=1000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Resource Not Found')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

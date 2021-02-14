@@ -8,20 +8,21 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
-def paginate_questions(request,selection):
+
+def paginate_questions(request, selection):
     """
-    A helper function that helps divide the questions fetched from the data base into 
-    pages 
+    A helper function that helps divide the questions fetched from the
+    database into pages
     Arguments:
     ----------
-    selection: the data to select from 
+    selection: the data to select from
     request: the request object
     """
     page = request.args.get('page', 1, type=int)
-    start =  (page-1) * QUESTIONS_PER_PAGE
+    start = (page-1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
-    current_questions = selection[start:end]
-    return current_questions
+    current_questions = [question.format() for question in selection]
+    return current_questions[start:end]
 
 
 def create_app(test_config=None):
@@ -59,19 +60,24 @@ def create_app(test_config=None):
             'categories': formated_categories
         })
 
-    '''
-        @TODO:
-        Create an endpoint to handle GET requests for questions, 
-        including pagination (every 10 questions). 
-        This endpoint should return a list of questions, 
-        number of total questions, current category, categories. 
+    @app.route('/questions')
+    def get_questions_paginated():
+        selection = Question.query.order_by(Question.id).all()
+        current_questions = paginate_questions(request, selection)
+        categories = Category.query.order_by(Category.id).all()
 
-        TEST: At this point, when you start the application
-        you should see questions and categories generated,
-        ten questions per page and pagination at the bottom 
-        of the screen for three pages.
-        Clicking on the page numbers should update the questions. 
-    '''
+        if len(current_questions) == 0:
+            abort(404)
+
+        return jsonify({
+            'success': True,
+            'questions': current_questions,
+            'total_questions_number': len(selection),
+            'current_category': None,
+            'categories': {
+                category.id: category.type for category in categories
+            }
+        })
 
     '''
         @TODO: 
