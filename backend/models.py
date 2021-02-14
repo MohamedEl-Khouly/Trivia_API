@@ -5,15 +5,15 @@ import json
 from dotenv import load_dotenv
 
 load_dotenv()
-user= os.getenv('POSTGRES_USER')
-password= os.getenv("POSTGRES_PASSWORD")
+user = os.getenv('POSTGRES_USER')
+password = os.getenv("POSTGRES_PASSWORD")
 
 
 database_name = "trivia"
 database_path = "postgresql://{}:{}@{}/{}".format(
     user,
     password,
-    'localhost:5432', 
+    'localhost:5432',
     database_name
 )
 
@@ -23,6 +23,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
+
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -30,11 +32,14 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
 
+
 '''
 Question
 
 '''
-class Question(db.Model):  
+
+
+class Question(db.Model):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
@@ -52,7 +57,7 @@ class Question(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
-  
+
     def update(self):
         db.session.commit()
 
@@ -69,11 +74,14 @@ class Question(db.Model):
             'difficulty': self.difficulty
         }
 
+
 '''
 Category
 
 '''
-class Category(db.Model):  
+
+
+class Category(db.Model):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)

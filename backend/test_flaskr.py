@@ -40,7 +40,6 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['success'],True)
-        self.assertTrue(data['Total_categories'])
 
 
 # Make the tests conveniently executable

@@ -14,9 +14,9 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    
+
     # Intiate CORS
-    CORS(app)
+    CORS(app, resources={'/': {'origins': '*'}})
 
     # After request headers
     @app.after_request
@@ -39,11 +39,10 @@ def create_app(test_config=None):
         ]
         return jsonify({
             'success': True,
-            'categories': formated_categories,
-            'Total_categories': len(formated_categories)
+            'categories': formated_categories
         })
     '''
-        @TODO: 
+        @TODO:
         Create an endpoint to handle GET requests for questions, 
         including pagination (every 10 questions). 
         This endpoint should return a list of questions, 
@@ -51,7 +50,8 @@ def create_app(test_config=None):
 
         TEST: At this point, when you start the application
         you should see questions and categories generated,
-        ten questions per page and pagination at the bottom of the screen for three pages.
+        ten questions per page and pagination at the bottom 
+        of the screen for three pages.
         Clicking on the page numbers should update the questions. 
     '''
 
@@ -59,8 +59,10 @@ def create_app(test_config=None):
         @TODO: 
         Create an endpoint to DELETE question using a question ID. 
 
-        TEST: When you click the trash icon next to a question, the question will be removed.
-        This removal will persist in the database and when you refresh the page. 
+        TEST: When you click the trash icon next to a question, 
+        the question will be removed.
+        This removal will persist in the database and 
+        when you refresh the page. 
     '''
 
     '''
@@ -70,7 +72,8 @@ def create_app(test_config=None):
         category, and difficulty score.
 
         TEST: When you submit a question on the "Add" tab, 
-        the form will clear and the question will appear at the end of the last page
+        the form will clear and the question will appear 
+        at the end of the last page
         of the questions list in the "List" tab.  
     '''
 
