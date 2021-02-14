@@ -8,6 +8,20 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+def paginate_questions(request,selection):
+    """
+    A helper function that helps divide the questions fetched from the data base into 
+    pages 
+    Arguments:
+    ----------
+    selection: the data to select from 
+    request: the request object
+    """
+    page = request.args.get('page', 1, type=int)
+    start =  (page-1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+    current_questions = selection[start:end]
+    return current_questions
 
 def create_app(test_config=None):
 
