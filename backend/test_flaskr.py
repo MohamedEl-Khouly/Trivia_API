@@ -40,7 +40,13 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['success'],True)
+        self.assertEqual(type(data['categories']),dict)
+        self.assertTrue(len(data['categories']))
 
+    def test_categories_not_found(self):
+        res = self.client().get('/categories')
+        
+        self.assertEquals(res.status_code,404)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
