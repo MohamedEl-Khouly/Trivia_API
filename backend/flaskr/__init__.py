@@ -8,28 +8,40 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
 def create_app(test_config=None):
+
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
     
     # Intiate CORS
     CORS(app)
-    
+
     # After request headers
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers','Content-Type,Authorization,true')
-        response.headers.add('Access-Control-Allow-Methods','GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add(
+            'Access-Control-Allow-Headers',
+            'Content-Type,Authorization,true'
+        )
+        response.headers.add(
+            'Access-Control-Allow-Methods',
+            'GET,PUT,POST,DELETE,OPTIONS'
+        )
         return response
-            
-    '''
-        @TODO: 
-        Create an endpoint to handle GET requests 
-        for all available categories.
-    '''
 
-
+    @app.route("/categories")
+    def get_categories():
+        current_categories = Category.query.order_by(Category.id).all()
+        formated_categories = [
+            category.format() for category in current_categories
+        ]
+        return jsonify({
+            'success': True,
+            'categories': formated_categories,
+            'Total_categories': len(formated_categories)
+        })
     '''
         @TODO: 
         Create an endpoint to handle GET requests for questions, 

@@ -10,7 +10,12 @@ password= os.getenv("POSTGRES_PASSWORD")
 
 
 database_name = "trivia"
-database_path = "postgres://{}:{}@{}/{}".format(user,password,'localhost:5432', database_name)
+database_path = "postgresql://{}:{}@{}/{}".format(
+    user,
+    password,
+    'localhost:5432', 
+    database_name
+)
 
 db = SQLAlchemy()
 
