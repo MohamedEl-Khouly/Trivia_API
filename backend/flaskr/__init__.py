@@ -47,20 +47,15 @@ def create_app(test_config=None):
 
     @app.route("/categories")
     def get_categories():
-        try:
-            current_categories = Category.query.order_by(Category.id).all()
-            if len(current_categories) == 0:
-                abort(404)
+        current_categories = Category.query.order_by(Category.id).all()
+        formated_categories = {
+            category.id: category.type for category in current_categories
+        }
+        return jsonify({
+            'success': True,
+            'categories': formated_categories
+        })
 
-            formated_categories = {
-                category.id : category.type for category in current_categories
-            }
-            return jsonify({
-               'success': True,
-               'categories': formated_categories
-            })
-        except:
-            abort(404)
     '''
         @TODO:
         Create an endpoint to handle GET requests for questions, 
@@ -130,11 +125,37 @@ def create_app(test_config=None):
         and shown whether they were correct or not. 
     '''
 
-    '''
-        @TODO: 
-        Create error handlers for all expected errors 
-        including 404 and 422. 
-    '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'Resource Not Found'
+        }), 404
+
+    @app.errorhandler(422)
+    def cannot_process(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'Request cannot be procesed'
+        }), 422
+
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "error": 400,
+            "message": "bad request"
+        }), 400
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({
+            "success": False,
+            "error": 500,
+            "message": "internal server error"
+        }), 500
 
     return app
 
