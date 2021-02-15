@@ -136,7 +136,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource Not Found')
 
     def test_quiz_generator(self):
-        res = self.client().post("/quises", json={
+        res = self.client().post("/quizes", json={
             "category": 1,
             "previous": [2]
         })
@@ -149,7 +149,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['previous']))
 
     def test_quiz_generator_faliure(self):
-        res = self.client().post("/quises")
+        res = self.client().post("/quizes")
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
