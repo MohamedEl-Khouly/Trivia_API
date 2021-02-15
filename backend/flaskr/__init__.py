@@ -155,6 +155,10 @@ def create_app(test_config=None):
         except:
             abort(404)
 
+    @app.route('/quizes', methods=['POST'])
+    def play_quiz():
+        pass
+    
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
