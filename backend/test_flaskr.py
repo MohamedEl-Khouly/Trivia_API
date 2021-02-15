@@ -104,7 +104,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Request cannot be procesed')
 
     def test_search_query(self):
-        res = self.client().post('/questions/search', json= {"search_term": "book"})
+        res = self.client().post(
+            '/questions/search',
+            json={"search_term": "b"}
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -113,7 +116,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions_number'])
 
     def test_search_query_not_found(self):
-        res = self.client().post('/questions/search')
+        res = self.client().post('/questions/search', json= { })
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)

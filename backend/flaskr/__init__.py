@@ -120,53 +120,38 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-    '''
-        @TODO: 
-        Create a POST endpoint to get questions based on a search term. 
-        It should return any questions for whom the search term 
-        is a substring of the question. 
-
-        TEST: Search by any phrase. The questions list will update to include 
-        only question that include that string within their question. 
-        Try using the word "title" to start. 
-    '''
-    @app.route('/questions/search')
+    @app.route('/questions/search', methods=['POST'])
     def search_questions():
         body = request.get_json()
-        search_term = body.get('search_term',None)
+        search_term = body.get('search_term', None)
         if search_term:
             questions = Question.query.filter(func.lower(Question.question).\
                 like('%'+search_term.lower()+"%")).all()
-            current_questions = paginate_questions(request, questions)
-            formatted =[question.format() for question in current_questions]
+            formatted = [question.format() for question in questions]
             return jsonify({
                 'success': True,
                 'questions': formatted,
                 'total_questions_number': len(questions),
-                'current_category': None
+                'current_category': None,
             })
-        abort(404)
-    '''
-        @TODO: 
-        Create a GET endpoint to get questions based on category. 
-
-        TEST: In the "List" tab / main screen, clicking on one of the 
-        categories in the left column will cause only questions of that 
-        category to be shown. 
-    '''
-
-
-    '''
-        @TODO: 
-        Create a POST endpoint to get questions to play the quiz. 
-        This endpoint should take category and previous question parameters 
-        and return a random questions within the given category, 
-        if provided, and that is not one of the previous questions. 
-
-        TEST: In the "Play" tab, after a user selects "All" or a category,
-        one question at a time is displayed, the user is allowed to answer
-        and shown whether they were correct or not. 
-    '''
+        else:
+            abort(404)
+    @app.route('/categories/<int:category_id>/questions')
+    def get_by_querry(category_id):
+        try:
+            questions = Question.querry.filter(
+                Category.id == category_id
+            ).all()
+            current = paginate_questions(request, questions)
+            formated = [ question.format() for question in current]
+            return jsonify({
+                'success' : True,
+                'total_questions_number': len(questions),
+                'current_category' : category_id,
+                'questions' : formated
+            })
+        except:
+            abort(404)
 
     @app.errorhandler(404)
     def not_found(error):
@@ -192,14 +177,5 @@ def create_app(test_config=None):
             "message": "bad request"
         }), 400
 
-    @app.errorhandler(500)
-    def internal_error(error):
-        return jsonify({
-            "success": False,
-            "error": 500,
-            "message": "internal server error"
-        }), 500
 
     return app
-
-    
