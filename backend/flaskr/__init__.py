@@ -3,7 +3,7 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
-from sqlalchemy import func, desc
+from sqlalchemy import func
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
@@ -125,8 +125,9 @@ def create_app(test_config=None):
         body = request.get_json()
         search_term = body.get('search_term', None)
         if search_term:
-            questions = Question.query.filter(func.lower(Question.question).\
-                like('%'+search_term.lower()+"%")).all()
+            questions = Question.query.filter(
+                func.lower(Question.question).like('%'+search_term.lower()+"%")
+            ).all()
             formatted = [question.format() for question in questions]
             return jsonify({
                 'success': True,
@@ -178,8 +179,6 @@ def create_app(test_config=None):
             'previous': previous
         })
 
-
-
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
@@ -203,6 +202,5 @@ def create_app(test_config=None):
             "error": 400,
             "message": "bad request"
         }), 400
-
 
     return app

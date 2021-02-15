@@ -4,7 +4,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
-from models import setup_db, Question, Category
+from models import setup_db
 
 
 class TriviaTestCase(unittest.TestCase):
@@ -23,7 +23,7 @@ class TriviaTestCase(unittest.TestCase):
         )
         setup_db(self.app, self.database_path)
 
-        self.new_question ={
+        self.new_question = {
             'question': 'who was the last epl champion?',
             'answer': 'liverpool',
             'difficulty': 1,
@@ -111,7 +111,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions_number'])
 
     def test_search_query_not_found(self):
-        res = self.client().post('/questions/search', json= { })
+        res = self.client().post('/questions/search', json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
