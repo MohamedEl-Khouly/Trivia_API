@@ -103,6 +103,62 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['message'], 'Request cannot be procesed')
 
+    def test_search_query(self):
+        res = self.client().post('/questions/search', json= {"search_term": "book"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(data['total_questions_number'])
+
+    def test_search_query_not_found(self):
+        res = self.client().post('/questions/search')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Resource Not Found')
+
+    def test_get_by_category(self):
+        res = self.client().get("/categories/4/questions")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(data['category'])
+        self.assertTrue(data['total_questions_number'])
+
+    def test_get_by_category_not_found(self):
+        res = self.client().get("/categories/100/questions")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Resource Not Found')
+
+    def test_quiz_generator(self):
+        res = self.client().post("/quises", json={
+            "category": 1,
+            "previous": [2]
+        })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['category'])
+        self.assertTrue(data['question'])
+        self.assertTrue(len(data['previous']))
+
+    def test_quiz_generator_faliure(self):
+        res = self.client().post("/quises")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Bad Request')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
