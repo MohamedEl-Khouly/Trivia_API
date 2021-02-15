@@ -157,8 +157,29 @@ def create_app(test_config=None):
 
     @app.route('/quizes', methods=['POST'])
     def play_quiz():
-        pass
-    
+        body = request.get_json()
+        if not(('category' in body) and ('previous' in body)):
+            abort(422)
+        category = body.get("category")
+        previous = body.get('previous')
+        avilable_questions = Question.query.filter(
+            Question.category == category,
+            Question.id.notin_(previous)
+        ).all()
+        new_question = avilable_questions[random.randrange(
+            0, len(avilable_questions))] if len(avilable_questions) > 0 else None
+        
+        previous.append(new_question.id)
+
+        return jsonify({
+            'success': True,
+            'question': new_question.format(),
+            'category': category,
+            'previous': previous
+        })
+
+
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({

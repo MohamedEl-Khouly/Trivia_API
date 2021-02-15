@@ -149,12 +149,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data['previous']))
 
     def test_quiz_generator_faliure(self):
-        res = self.client().post("/quizes")
+        res = self.client().post("/quizes", json={})
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Bad Request')
+        self.assertEqual(data['message'], 'Request cannot be procesed')
 
 
 # Make the tests conveniently executable
