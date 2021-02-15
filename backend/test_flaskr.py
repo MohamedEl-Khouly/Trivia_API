@@ -50,11 +50,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(type(data['categories']), dict)
         self.assertTrue(len(data['categories']))
 
-    def test_categories_not_found(self):
-        res = self.client().get('/categories')
-
-        self.assertEqual(res.status_code, 404)
-
     def test_get_paginated_questions(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
@@ -130,7 +125,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['questions']))
-        self.assertTrue(data['category'])
         self.assertTrue(data['total_questions_number'])
 
     def test_get_by_category_not_found(self):

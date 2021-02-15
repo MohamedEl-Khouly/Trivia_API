@@ -136,19 +136,21 @@ def create_app(test_config=None):
             })
         else:
             abort(404)
+
     @app.route('/categories/<int:category_id>/questions')
     def get_by_querry(category_id):
         try:
-            questions = Question.querry.filter(
-                Category.id == category_id
-            ).all()
-            current = paginate_questions(request, questions)
-            formated = [ question.format() for question in current]
+            questions = Question.query.filter(
+                Question.category == category_id
+            ).order_by(Question.id).all()
+            if len(questions) == 0:
+                abort(404)
+            formated = [question.format() for question in questions]
             return jsonify({
-                'success' : True,
+                'success': True,
                 'total_questions_number': len(questions),
-                'current_category' : category_id,
-                'questions' : formated
+                'current_category': category_id,
+                'questions': formated
             })
         except:
             abort(404)
