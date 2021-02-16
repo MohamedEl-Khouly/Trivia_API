@@ -159,9 +159,9 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=['POST'])
     def play_quiz():
         body = request.get_json()
-        if not(('questionCategory' in body) and ('previousQuestions' in body)):
+        if not(('quizCategory' in body) and ('previousQuestions' in body)):
             abort(422)
-        category = body.get("questionCategory")
+        category = body.get("quizCategory")
         previous = body.get('previousQuestions')
         avilable_questions = Question.query.filter(
             Question.category == category,
@@ -175,7 +175,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'question': new_question.format(),
-            'questionCategory': category,
+            'quizCategory': category,
             'previousQuestions': previous
         })
 
