@@ -72,7 +72,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'questions': current_questions,
-            'total_questions_number': len(selection),
+            'total_questions': len(selection),
             'current_category': None,
             'categories': {
                 category.id: category.type for category in categories
@@ -123,7 +123,7 @@ def create_app(test_config=None):
     @app.route('/questions/search', methods=['POST'])
     def search_questions():
         body = request.get_json()
-        search_term = body.get('search_term', None)
+        search_term = body.get('searchTerm', None)
         if search_term:
             questions = Question.query.filter(
                 func.lower(Question.question).like('%'+search_term.lower()+"%")
@@ -132,7 +132,7 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True,
                 'questions': formatted,
-                'total_questions_number': len(questions),
+                'total_questions': len(questions),
                 'current_category': None,
             })
         else:
@@ -149,20 +149,20 @@ def create_app(test_config=None):
             formated = [question.format() for question in questions]
             return jsonify({
                 'success': True,
-                'total_questions_number': len(questions),
+                'total_questions': len(questions),
                 'current_category': category_id,
                 'questions': formated
             })
         except:
             abort(404)
 
-    @app.route('/quizes', methods=['POST'])
+    @app.route('/quizzes', methods=['POST'])
     def play_quiz():
         body = request.get_json()
-        if not(('category' in body) and ('previous' in body)):
+        if not(('questionCategory' in body) and ('previousQuestions' in body)):
             abort(422)
-        category = body.get("category")
-        previous = body.get('previous')
+        category = body.get("questionCategory")
+        previous = body.get('previousQuestions')
         avilable_questions = Question.query.filter(
             Question.category == category,
             Question.id.notin_(previous)
@@ -175,8 +175,8 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'question': new_question.format(),
-            'category': category,
-            'previous': previous
+            'questionCategory': category,
+            'previousQuestions': previous
         })
 
     @app.errorhandler(404)

@@ -58,7 +58,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['categories']))
         self.assertTrue(len(data['questions']))
-        self.assertTrue(data['total_questions_number'])
+        self.assertTrue(data['total_questions'])
 
     def test_404_sent_requesting_beyound_valid_pages(self):
         res = self.client().get('/questions?page=1000')
@@ -101,14 +101,14 @@ class TriviaTestCase(unittest.TestCase):
     def test_search_query(self):
         res = self.client().post(
             '/questions/search',
-            json={"search_term": "b"}
+            json={"searchTerm": "b"}
         )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['questions']))
-        self.assertTrue(data['total_questions_number'])
+        self.assertTrue(data['total_questions'])
 
     def test_search_query_not_found(self):
         res = self.client().post('/questions/search', json={})
@@ -125,7 +125,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['questions']))
-        self.assertTrue(data['total_questions_number'])
+        self.assertTrue(data['total_questions'])
 
     def test_get_by_category_not_found(self):
         res = self.client().get("/categories/100/questions")
@@ -136,20 +136,20 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource Not Found')
 
     def test_quiz_generator(self):
-        res = self.client().post("/quizes", json={
-            "category": 1,
-            "previous": [2]
+        res = self.client().post("/quizzes", json={
+            "quizCategory": 1,
+            "previousQuestions": [2]
         })
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['category'])
+        self.assertTrue(data['quizCategory'])
         self.assertTrue(data['question'])
-        self.assertTrue(len(data['previous']))
+        self.assertTrue(len(data['previousQuestions']))
 
     def test_quiz_generator_faliure(self):
-        res = self.client().post("/quizes", json={})
+        res = self.client().post("/quizzes", json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
