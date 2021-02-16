@@ -16,3 +16,4 @@ build/
 *.egg-info/
 backend/.vscode/settings.json
 .vscode/settings.json
+node_modules/
