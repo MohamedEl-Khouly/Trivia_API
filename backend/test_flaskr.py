@@ -144,9 +144,8 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['quizCategory'])
         self.assertTrue(data['question'])
-        self.assertTrue(len(data['previousQuestions']))
+
 
     def test_quiz_generator_faliure(self):
         res = self.client().post("/quizzes", json={})

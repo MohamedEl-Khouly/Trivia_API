@@ -32,7 +32,7 @@ def create_app(test_config=None):
     setup_db(app)
 
     # Intiate CORS
-    CORS(app, resources={'/': {'origins': '*'}})
+    CORS(app)
 
     # After request headers
     @app.after_request
@@ -158,26 +158,30 @@ def create_app(test_config=None):
 
     @app.route('/quizzes', methods=['POST'])
     def play_quiz():
-        body = request.get_json()
-        if not(('quizCategory' in body) and ('previousQuestions' in body)):
-            abort(422)
-        category = body.get("quizCategory")
-        previous = body.get('previousQuestions')
-        avilable_questions = Question.query.filter(
-            Question.category == category,
-            Question.id.notin_(previous)
-        ).all()
-        new_question = avilable_questions[random.randrange(
-            0, len(avilable_questions))] if len(avilable_questions) > 0 else None
-        
-        previous.append(new_question.id)
+        try:
+            body = request.get_json()
+            if not ('quiz_category' in body and 'previous_questions' in body):
+                abort(422)
+            
+            category = body.get('quiz_category')
+            previous = body.get('previous_questions')
+            print(category,previous)
+            if category['type'] == 'click':
+                available_questions = Question.query.filter(
+                    Question.id.notin_((previous))).all()
+            else:
+                available_questions = Question.query.filter_by(
+                    category=category['id']).filter(Question.id.notin_((previous))).all()
+            print(available_questions)
+            new_question = available_questions[random.randrange(
+                    0, len(available_questions))].format() if len(available_questions) > 0 else None
 
-        return jsonify({
-            'success': True,
-            'question': new_question.format(),
-            'quizCategory': category,
-            'previousQuestions': previous
-        })
+            return jsonify({
+                'success': True,
+                'question': new_question,
+            })
+        except:
+            abort(404)
 
     @app.errorhandler(404)
     def not_found(error):
