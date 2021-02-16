@@ -100,10 +100,13 @@ def create_app(test_config=None):
     @app.route('/questions', methods=['POST'])
     def create_question():
         try:
-            new_question = request.get_json().get('question', None)
-            new_answer = request.get_json().get('answer', None)
-            new_difficulty = request.get_json().get('difficulty', None)
-            new_category = request.get_json().get('category', None)
+            body = request.get_json()
+            if not('question' in body and 'answer' in body and 'difficulty'in body and 'category' in body):
+                abort(400)
+            new_question = body.get('question', None)
+            new_answer = body.get('answer', None)
+            new_difficulty = body.get('difficulty', None)
+            new_category = body.get('category', None)
 
             question = Question(
                 question=new_question,
@@ -146,7 +149,7 @@ def create_app(test_config=None):
             ).order_by(Question.id).all()
             if len(questions) == 0:
                 abort(404)
-            formated = [question.format() for question in questions]
+            formated = paginate_questions(request, questions)
             return jsonify({
                 'success': True,
                 'total_questions': len(questions),
@@ -161,18 +164,16 @@ def create_app(test_config=None):
         try:
             body = request.get_json()
             if not ('quiz_category' in body and 'previous_questions' in body):
-                abort(422)
+                abort(400)
             
             category = body.get('quiz_category')
             previous = body.get('previous_questions')
-            print(category,previous)
             if category['type'] == 'click':
                 available_questions = Question.query.filter(
                     Question.id.notin_((previous))).all()
             else:
                 available_questions = Question.query.filter_by(
                     category=category['id']).filter(Question.id.notin_((previous))).all()
-            print(available_questions)
             new_question = available_questions[random.randrange(
                     0, len(available_questions))].format() if len(available_questions) > 0 else None
 
