@@ -181,7 +181,7 @@ def create_app(test_config=None):
                 'question': new_question,
             })
         except:
-            abort(404)
+            abort(422)
 
     @app.errorhandler(404)
     def not_found(error):
