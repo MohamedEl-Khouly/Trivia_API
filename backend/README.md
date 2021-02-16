@@ -74,10 +74,10 @@ When a request fails the API sends one of the following errors:
 - 422: Request cannot be procesed
 ### Endpoints
 
-GET `/categories`
+__GET__ `/categories`
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
+- Returns an object with the format of the following example 
 ```
 {
   "categories": {
@@ -92,11 +92,11 @@ GET `/categories`
 }
 ```
 
-GET `\questions?page=<page_number>`
+__GET__ `\questions?page=<page_number>`
 
 - Fetches a paginated list of questions of all available categories
 - Request parameters (optional): page:int
-- Returns: An object with same keys as the following example
+- Returns an object with the format of the following example
 ```
 {
 	"categories": {
@@ -185,14 +185,139 @@ GET `\questions?page=<page_number>`
 }
 ```
 
-DELETE `/questions/<int:question_id>`
+__DELETE__ `/questions/<int:question_id>`
 
 - Deletes a question from the table of questions storred in the APP database
 - Request arguments: question_id:int
-- Returns: An object with same keys as the following example
+- Returns an object with the format of the following example
 ```
 {
 	"deleted": "2", 
 	"success": true
 }
+```
+
+__POST__ `/questions`
+
+- Adds a new question to the table of questions storred in the  APP Database
+- Requires a body of the following format 
+```
+{
+	question:string,
+	answer:string,
+	difficulty:int,
+	category:int
+}
+```
+- Returns an object with the format of the following example
+```
+{
+	"created": 29, 
+	"success": true
+}
+```
+
+__POST__ `/questions/search`
+
+- Returns a list of questions containg the search term as a part of the question text
+- search term is not case sensitive
+- Requires a body of the following format
+```
+{
+	'searchTerm': 'what'
+}
+```
+- Returns an object with the format of the following example
+```
+{
+  "current_category": null, 
+  "questions": [
+    {
+      "answer": "Lisbon", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 29, 
+      "question": "What is the capital of Portugal?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 1
+}
+```
+
+__GET__ `/categories/<int:category_id>/questions`
+
+- Returns a list of the questions filtered by category.
+- Arguments: category_id : int
+- Returns an object with the format of the following example
+```
+{
+	"current_category": 4,
+	"questions": [
+		{
+			"answer": "Muhammad Ali",
+			"category": 4,
+			"difficulty": 1,
+			"id": 9,
+			"question": "What boxer's original name is Cassius Clay?"
+		},
+		{
+			"answer": "George Washington Carver",
+			"category": 4,
+			"difficulty": 2,
+			"id": 12,
+			"question": "Who invented Peanut Butter?"
+		},
+		{
+			"answer": "Scarab",
+			"category": 4,
+			"difficulty": 4,
+			"id": 23,
+			"question": "Which dung beetle was worshipped by the ancient Egyptians?"
+		}
+	],
+	"success": true,
+	"total_questions": 3
+}
+```
+__POST__ `/quizzes`
+
+- fetches a random question from the Database according to a specified category and excleding questions previously retrived
+
+- Requires a body of the following format
+```
+{
+	previous_questions: array of int, 
+	quiz_category:{
+		id:int,
+		type:string
+	}
+}
+```
+- Returns an object with the format of the following example
+```
+{
+	'success':true,
+	'question':{
+
+		"answer": "Scarab",
+		"category": 4,
+		"difficulty": 4,
+		"id": 23,
+		"question": "Which dung beetle was worshipped by the ancient Egyptians?"
+	}
+}
+```
+
+## Testing
+
+The file test_flasker.py includes test scenarios for each endpoint
+
+To run the tests, run
+
+```bash
+dropdb trivia_test
+createdb trivia_test
+psql trivia_test < trivia.psql
+python test_flaskr.py
 ```
