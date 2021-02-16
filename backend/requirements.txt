@@ -1,6 +1,7 @@
 aniso8601==6.0.0
 astroid==2.4.2
 Click==7.0
+flake8==3.8.4
 Flask==1.0.3
 Flask-Cors==3.0.7
 Flask-RESTful==0.3.7
@@ -12,6 +13,8 @@ lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
 psycopg2-binary==2.8.6
+pycodestyle==2.6.0
+pyflakes==2.2.0
 pylint==2.6.0
 python-dotenv==0.15.0
 pytz==2019.1
