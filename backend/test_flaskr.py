@@ -22,7 +22,6 @@ class TriviaTestCase(unittest.TestCase):
             'localhost:5432', self.database_name
         )
         setup_db(self.app, self.database_path)
-
         self.new_question = {
             'question': 'who was the last epl champion?',
             'answer': 'liverpool',
@@ -44,7 +43,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(type(data['categories']), dict)
@@ -53,7 +51,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_paginated_questions(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['categories']))
@@ -63,7 +60,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_404_sent_requesting_beyound_valid_pages(self):
         res = self.client().get('/questions?page=1000')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Resource Not Found')
@@ -71,7 +67,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_delete_question(self):
         res = self.client().delete('/questions/4')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['deleted'], 4)
@@ -79,7 +74,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_delete_question_failed(self):
         res = self.client().delete('/questions/10000')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Request cannot be procesed')
@@ -87,14 +81,12 @@ class TriviaTestCase(unittest.TestCase):
     def test_create_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
 
     def test_create_question_failed(self):
         res = self.client().post('/questions')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['message'], 'Request cannot be procesed')
 
@@ -104,7 +96,6 @@ class TriviaTestCase(unittest.TestCase):
             json={"searchTerm": "b"}
         )
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['questions']))
@@ -113,7 +104,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_search_query_not_found(self):
         res = self.client().post('/questions/search', json={})
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Resource Not Found')
@@ -121,7 +111,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_by_category(self):
         res = self.client().get("/categories/4/questions")
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['questions']))
@@ -130,7 +119,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_by_category_not_found(self):
         res = self.client().get("/categories/100/questions")
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Resource Not Found')
@@ -144,7 +132,6 @@ class TriviaTestCase(unittest.TestCase):
             'previous_questions': [2]
         })
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
@@ -153,7 +140,6 @@ class TriviaTestCase(unittest.TestCase):
     def test_quiz_generator_faliure(self):
         res = self.client().post("/quizzes", json={})
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Request cannot be procesed')
