@@ -137,8 +137,11 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_quiz_generator(self):
         res = self.client().post("/quizzes", json={
-            "quizCategory": 1,
-            "previousQuestions": [2]
+            'quiz_category': {
+                'id': 0,
+                'type': 'click',
+            },
+            'previous_questions': [2]
         })
         data = json.loads(res.data)
 

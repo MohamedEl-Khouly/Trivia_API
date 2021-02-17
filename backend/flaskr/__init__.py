@@ -163,34 +163,41 @@ def create_app(test_config=None):
     def play_quiz():
         try:
             body = request.get_json()
+            
             if not ('quiz_category' in body and 'previous_questions' in body):
                 abort(400)
             
             category = body.get('quiz_category')
             previous = body.get('previous_questions',None)
+            
             if previous :
+                
                 if category['id']==0:
                     available_questions = Question.query.filter(
                         Question.id.notin_(previous),
                     ).all()
+                    
                 else:
                     available_questions = Question.query.filter(
                         Question.id.notin_(previous),
                         Question.category == category['id']
                     ).all()
+                    
             else:
+                
                 if category['id']==0:
                     available_questions = Question.query.all()
                 else:
                     available_questions = Question.query.filter(
                         Question.category == category['id'],
                     ).all()
-
+            
             if len(available_questions) > 0:
-                new_question = available_questions[random.randint(0, len(available_questions))].format()  
+                new_question = available_questions[random.randint(0, len(available_questions))].format()
+                  
             else:
                 new_question = None
-
+            
             return jsonify({
                 'success': True,
                 'question': new_question,
