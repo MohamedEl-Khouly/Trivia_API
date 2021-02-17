@@ -168,16 +168,23 @@ def create_app(test_config=None):
             
             category = body.get('quiz_category')
             previous = body.get('previous_questions',None)
-
             if previous :
-                available_questions = Question.query.filter(
-                    Question.id.notin_(previous),
-                    Question.category == category['id']
-                ).all()
+                if category['id']==0:
+                    available_questions = Question.query.filter(
+                        Question.id.notin_(previous),
+                    ).all()
+                else:
+                    available_questions = Question.query.filter(
+                        Question.id.notin_(previous),
+                        Question.category == category['id']
+                    ).all()
             else:
-                available_questions = Question.query.filter(
-                    Question.category == category['id'],
-                ).all()
+                if category['id']==0:
+                    available_questions = Question.query.all()
+                else:
+                    available_questions = Question.query.filter(
+                        Question.category == category['id'],
+                    ).all()
 
             if len(available_questions) > 0:
                 new_question = available_questions[random.randint(0, len(available_questions))].format()  
